@@ -9,13 +9,16 @@ app.use(express.json());
 let usuarios = [];
 
 app.post('/usuarios', (request,response)=>{
-    const usuario = request.body
-    usuarios.push({
-        nome:usuario.nome, email:usuario.email, senha:usuario.senha
-    })
-    console.log(usuarios);
-    response.status(204).json();
+    const usuario = request.body;
+    usuarios.push(usuario);
+    console.log(usuario);
+
+    return response.status(204).json(usuarios[usuarios.length -1]);
 });
+
+app.get("/usuarios", (request, response)=>{
+    return response.status(201).json(usuarios);
+})
 
 app.listen(5500, ()=>{
     console.log("Rodando")
