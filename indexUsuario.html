@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Atividade Final - Aplicando conhecimento</title>
+    </head>
+
+    <body>   
+
+          <button type="button" onclick="cadastrarUsuario(usuarios)">Cadastrar usuário</button>
+
+          <button type="button" onclick="lerUsuario(usuarios)">Ler usuário</button>
+
+          <button type="button" onclick="editarUsuario(usuarios)">Editar usuário</button>
+
+          <button type="button" onclick="deletarUsuario(usuarios)">Excluir usuário</button>
+
+          <button type="button" onclick="cadastrarRecado(recados)">Cadastrar recado</button>
+
+          <button type="button" onclick="cadastrarRecado(recados)">Cadastrar recado</button>
+          
+
+        <script>
+            //Vamos criar um back-end que contém as seguintes funcionalidades:Criação de conta, Login, CRUD* de recados *CRUD (create, read, update e delete).
+
+            //Cadastrar usuário
+            let usuarios = []
+            let idCount = 0
+
+                function cadastrarUsuario(){
+                    let nome = prompt("Digite seu nome.")
+                    if(nome === ""){
+                        alert("Valor inválido.")
+                        return
+                    }
+                    let email = prompt("Digite o email.")
+                    if(email === ""){
+                        alert("Valor inválido.")
+                        return
+                    }
+                    let senha = prompt("Digite a senha")
+                    if(senha === ""){
+                        alert("Valor inválido.")
+                        return
+                    }                    
+
+                    let usuario = {
+                    id:++idCount,
+                    nome:nome,
+                    email:email,
+                    senha:senha
+                    }
+
+                    usuarios.push(usuario);
+                    console.log(usuarios);
+                    
+                }
+
+                //Ler usuários
+
+                function lerUsuario(){
+                    let filtro = prompt("Digite o nome do usuário.")
+                    
+                    let usuarioFiltrado = usuarios.filter(usuario=>usuario.nome===filtro)
+                    console.log (usuarioFiltrado);
+                    location.href = "indexRecado.html"                                      
+                }              
+
+                //Editar usuários
+
+                function editarUsuario(){
+                    let filtro = prompt("Digite o ID")
+                    let output = ""
+
+                    let usuarioFiltrado = usuarios.find(usuario=>usuario.id===parseInt(filtro));
+
+                    if(!usuarioFiltrado){
+                        alert("Usuário não encontrado.")
+                        return
+                    }
+
+                    let senha = prompt("Digite a nova senha.");
+
+                    usuarioFiltrado.senha = senha;
+
+                    console.log(usuarioFiltrado)
+                }               
+
+                //Remover usuário
+
+                function deletarUsuario(){
+                    let filtroId = prompt("Digite o ID")
+
+                    let usuarioFiltrado = usuarios.findIndex(usuarios=>usuarios.id === parseInt(filtroId))
+
+                    if(usuarioFiltrado === -1){
+                        alert("Usuário não encontrado!")
+                        return
+                    }
+                    usuarios.splice(usuarioFiltrado,1)
+                    alert("Usuário excluído com sucesso!")
+
+                    console.log(usuarios)
+                }
+
+                console.log(usuarios)  
+
+        </script>
+    </body>
+</html>

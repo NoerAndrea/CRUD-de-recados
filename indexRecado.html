@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Atividade Final - Aplicando conhecimento</title>
+    </head>
+
+    <body>   
+
+          <button type="button" onclick="cadastrarRecado(recados)">Cadastrar recado</button>
+
+          <button type="button" onclick="lerRecado(recados)">Ler recado</button>
+
+          <button type="button" onclick="editarRecado(recados)">Editar recado</button>
+
+          <button type="button" onclick="excluirRecado(recados)">Excluir recado</button>
+          
+
+        <script>
+            //Vamos criar um back-end que contém as seguintes funcionalidades:Criação de conta, Login, CRUD* de recados *CRUD (create, read, update e delete).
+
+            //Cadastrar recado
+
+                let recados = []
+                let idCount = 0
+
+                function cadastrarRecado(){
+                    let titulo = prompt("Digite o Título do Recado.")
+                    if(titulo === ""){
+                        alert("Valor inválido.")
+                        return
+                    }
+                    let descricao = prompt("Digite texto.")
+                    if(descricao === ""){
+                        alert("Valor inválido.")
+                        return
+                    }
+
+                    let recado = {
+                    id:++idCount,
+                    titulo:titulo,
+                    descricao:descricao
+                    }
+
+                    recados.push(recado)
+                    console.log(recados)
+                }
+
+                //Ler Recados
+
+                function lerRecado(){
+                    let filtro = prompt("Digite o título do recado.")
+                    
+                    let recadoFiltrado = recados.filter(recado=>recado.titulo===filtro)
+                  console.log(recadoFiltrado);                               
+                }
+
+                //Editar recados
+
+                function editarRecado(){
+                    let filtro = prompt("Digite o ID")
+                    let output = ""
+
+                    let recadoFiltrado = recados.find(recado=>recado.id===parseInt(filtro));
+                    
+                    let texto = prompt("Digite o novo texto.");
+
+                    recadoFiltrado.descricao = texto;
+
+                    console.log(recadoFiltrado)
+                }      
+                
+                //Excluir recados
+
+                function excluirRecado(){
+
+                    let filtroId = prompt("Digite o ID")
+
+                    let recadoFiltrado = recados.findIndex(recados=>recados.id === parseInt(filtroId))
+
+                    if(recadoFiltrado === -1){
+                        alert("Usuário não encontrado!")
+                        return
+                    }
+                    recados.splice(recadoFiltrado,1)
+                    alert("Usuário excluído com sucesso!")
+
+                    console.log(recados)
+                }
+        </script>
+    </body>
+</html>
