@@ -9,6 +9,7 @@ app.use(express.json());
 let usuarios = []
 
 //POST - cadastro de usuário
+
 app.post('/usuarios', async(request,response)=>{
     const usuario = request.body;    
     
@@ -33,16 +34,17 @@ app.post('/usuarios', async(request,response)=>{
     return response.status(201).send("Usuário criado com sucesso!"); 
 });
 
-// GET - traz detalhes (lista ou um item por vez
+// GET - ler usuário
+
 app.get("/usuarios", (request, response)=>{
     return response.status(201).json(usuarios);
 })
-// POST - Ususario já existente find nome e senha já estão criados no array bycript.comper
+// POST - login
 
 app.post('/usuarios/login', (request,response)=>{
     const filtroLogin = request.body;   
 
-    const usuario = usuarios.find(usuario=>usuario.nome===filtroLogin.nome);
+    const usuario = usuarios.find(usuario=>usuario.em,email===filtroLogin.email);
 
     if(!usuario){
         return response.status(402).json("Por favor, digite um usuário já cadastrado.")
@@ -57,11 +59,59 @@ app.post('/usuarios/login', (request,response)=>{
     });
 })
 
-//POST - recado
+//POST - criar recado
 
-// PUT - edição de 1 usuário
+let recados = [];
 
-// DELETE - exclusão de um usuário
+app.post('/login/recado', (request, response)=>{
+    const {titulo,descricao} = request.body;
+
+    const recado = {
+        id: recados.length + 1,
+        titulo,
+        descricao
+    }
+
+    recados.push(recado);
+    
+    return response.status(201).send("Recado criado com sucesso!"); 
+
+})
+
+//GET - ler recado
+
+app.get('/login/recado', (request, response)=>{
+
+    return response.status(201).json(recados);
+})
+
+// PUT - edição de recado
+
+app.put('/login/recado/editar', (request, response)=>{
+    const index = request.params;
+    const id = request.body;
+
+    recados[index] = id;
+
+    return response.json(recados);
+})
+
+// DELETE - exclusão de recado
+
+app.delete('/login/recado/excluir', (request, response)=>{
+    const index = request.params;
+
+    recados.splice(index,1);
+
+    return response.send("Recado excluído com sucesso!");
+})
+
+//GET - ler recado
+
+app.get('/login/recado', (request, response)=>{
+
+    return response.status(201).json(recados);
+})
 
 app.listen(5500, ()=>{
     console.log("Rodando")
