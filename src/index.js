@@ -6,31 +6,33 @@ const app = express();
 app.use(express.json());
 
 //POST criando usuarios
-let usuarios = []
+let usuarios = [];
+let recados = [];
 
 //POST - cadastro de usuário
 
 app.post('/usuarios', async(request,response)=>{
-    const usuario = request.body;    
+    const { nome,email,senha} = request.body;    
     
-    let usuarioFiltrado = usuarios.find(user=>user.email === usuario.email);
+    let usuarioFiltrado = usuarios.find(user=>user.email === email);
 
     if(usuarioFiltrado){
         return response.status(409).send("Usuário já existe.")
     }
     
     //Criptografar senha
-    let senhaCriptografada = await bcrypt.hash(usuario.senha, 10)
+    let senhaCriptografada = await bcrypt.hash(senha, 10)
 
     const novoUsuario = {
         id: usuarios.length + 1,
-        nome: usuario.nome,
-        email: usuario.email,
-        senha:senhaCriptografada
+        nome,
+        email,
+        senha:senhaCriptografada,
+        recados: [],
     }
 
     usuarios.push(novoUsuario);
-    console.log(usuario)
+    console.log(novoUsuario);
     return response.status(201).send("Usuário criado com sucesso!"); 
 });
 
@@ -44,7 +46,7 @@ app.get("/usuarios", (request, response)=>{
 app.post('/usuarios/login', (request,response)=>{
     const filtroLogin = request.body;   
 
-    const usuario = usuarios.find(usuario=>usuario.em,email===filtroLogin.email);
+    const usuario = usuarios.find(usuario=>usuario.email===filtroLogin.email);
 
     if(!usuario){
         return response.status(402).json("Por favor, digite um usuário já cadastrado.")
@@ -61,57 +63,92 @@ app.post('/usuarios/login', (request,response)=>{
 
 //POST - criar recado
 
-let recados = [];
+app.post('/usuarios/:id/recados', (request, response)=>{
+    const { titulo,descricao } = request.body;
+    const usuarioId = parseInt(request.params.id);
 
-app.post('/login/recado', (request, response)=>{
-    const {titulo,descricao} = request.body;
+    const usuario = usuarios.find((user)=> user.id === usuarioId);
 
-    const recado = {
-        id: recados.length + 1,
-        titulo,
-        descricao
+    if(!usuario){
+        return response.status(404).json("Usuário não encontrado.")
     }
 
-    recados.push(recado);
+    const novoRecado = {
+        id: recados.length + 1,
+        titulo,
+        descricao,
+    };
+
+    usuario.recados.push(novoRecado);
+    recados.push(novoRecado);
     
     return response.status(201).send("Recado criado com sucesso!"); 
-
 })
 
 //GET - ler recado
 
-app.get('/login/recado', (request, response)=>{
+app.get('/usuarios/:id/recados', (request, response)=>{
 
-    return response.status(201).json(recados);
-})
+    const usuarioId = parseInt(request.params.id);
+
+    const usuario = usuarios.find((user) => user.id === usuarioId);
+
+    if(!usuario){
+        return response.status(404).json("Usuário não encontrado.")
+    }
+
+    return response.status(201).json(usuario.recados);
+});
 
 // PUT - edição de recado
 
-app.put('/login/recado/editar', (request, response)=>{
-    const index = request.params;
-    const id = request.body;
+ app.put('/usuarios/:userId/recados/:recadoId', (request, response)=>{
+    const usuarioId = parseInt(request.params.userId);
+    const { titulo, descricao } = request.body;
+    const recadoId = parseInt(request.params.recadoId)
 
-    recados[index] = id;
+    const usuario = usuarios.find((user) => user.id === usuarioId);
 
-    return response.json(recados);
-})
+    if(!usuario){
+        return response.status(404).json("Usuário não encontrado.");
+    }
+
+    const recado = usuario.recados.find((recado) => recado.id ===  recadoId);
+
+    if (!recado) {
+        return response.status(404).json("Recado não existe.");
+    }
+
+    recado.titulo = titulo;
+    recado.descricao = descricao;
+
+    return response.status(201).send("Recado atualizado com sucesso!");
+ })
+
 
 // DELETE - exclusão de recado
 
-app.delete('/login/recado/excluir', (request, response)=>{
-    const index = request.params;
+app.delete('/usuarios/:userId/recados/:recadoId', (request, response)=>{
+    const usuarioId = parseInt(request.params.userId);
+    const recadoId = parseInt(request.params.recadoId);
 
-    recados.splice(index,1);
+    const usuario = usuarios.find((user) => user.id === usuarioId);
+
+    if(!usuario){
+        return response.status(404).json("Usuário não encontrado.");
+    }
+
+    const recado = usuario.recados.find((recado) => recado.id ===  recadoId);
+
+    if (!recado) {
+        return response.status(404).json("Recado não existe.");
+    }
+
+    recados.splice(recadoId,0);
 
     return response.send("Recado excluído com sucesso!");
-})
+});
 
-//GET - ler recado
-
-app.get('/login/recado', (request, response)=>{
-
-    return response.status(201).json(recados);
-})
 
 app.listen(5500, ()=>{
     console.log("Rodando")
